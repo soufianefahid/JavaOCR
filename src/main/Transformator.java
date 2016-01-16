@@ -13,5 +13,6 @@ public class Transformator {
 		String rs = ocr.recognize(new File[] {new File(input)},  Ocr.RECOGNIZE_TYPE_ALL, Ocr.OUTPUT_FORMAT_PLAINTEXT);
 		ocr.stopEngine();
 		return rs;
+		//6522
 	}
 }
