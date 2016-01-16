@@ -18,5 +18,6 @@ public class Main {
 		
 		System.out.println("Results : "+results.size()+" matchs");
 		System.out.println("OCR Result : \n"+text);
+		
 	}
 }
