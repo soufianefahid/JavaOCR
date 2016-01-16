@@ -10,10 +10,10 @@ public class Main {
 		Transformator transformator = new Transformator();
 		Search search = new Search();
 		List<String> tokens = new ArrayList<String>();
-		
+		String text = transformator.imageToString("rsc/input/TEST_2.JPG", "rsc/output/result.txt");
 		tokens.add("E8767");
 		
-		String text = transformator.imageToString("rsc/input/TEST_2.JPG", "rsc/output/result.txt");
+		
 		List<String> results = search.findWords(text, tokens);
 		
 		System.out.println("Results : "+results.size()+" matchs");
