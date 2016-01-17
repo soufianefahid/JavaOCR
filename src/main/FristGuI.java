@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -13,14 +12,15 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
@@ -30,16 +30,24 @@ public class FristGuI {
 	private JTextField textField;
 	private JPanel panel;
 	private JLabel label;
-	private JTextPane textPane;
-	private JScrollPane jsp ;
+	private JButton button;
+	JComboBox comboBox_1 = new JComboBox();
+	JComboBox comboBox = new JComboBox();
+	int Format=0;
+	public int getFormat(){
+		return Format;
+	}
 	public FristGuI() {
 		initialize();
 
 	}
-	
+	JComboBox getchoice (){
+		return comboBox;
+	}
 	private class MouseAct extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			button.setEnabled(true);
 			JButton verifie = (JButton)e.getSource();
 			String etiquette = verifie.getLabel();
 			if(etiquette.equals("Load")){
@@ -89,7 +97,7 @@ public class FristGuI {
 			            try {
 							//File file = new File(path);
 			            	
-			            	BufferedImage image1 = new BufferedImage(423, 426, BufferedImage.TYPE_INT_ARGB);
+			            	BufferedImage image1 = new BufferedImage( 543, 426, BufferedImage.TYPE_4BYTE_ABGR);
 							BufferedImage image = ImageIO.read(file);
 							Graphics g = image1.createGraphics();
 							Image img = new ImageIcon(image).getImage();
@@ -101,7 +109,7 @@ public class FristGuI {
 							frame.revalidate();
 							textField.setText(file.getAbsolutePath().toString());
 						} catch (Exception e2) {
-							//e2.printStackTrace();
+							 e2.printStackTrace();
 						}
 			            
 			        } else {
@@ -111,16 +119,43 @@ public class FristGuI {
 			}
 			
 		else{
-			Transformator transformator = new Transformator();
-			path=textField.getText();
-			String text = transformator.imageToString(path, "rsc/output/result.txt");
-			textPane.setText(text);
-			jsp.getVerticalScrollBar().setValue(0);
-			frame.repaint();
-			frame.revalidate();
+				frame.setVisible(false);
+				Detection detection = new Detection();
+				detection.getComboBox().setSelectedIndex(comboBox.getSelectedIndex());
+				int indiceLangue=comboBox.getSelectedIndex();
+				//detection.comboBox.getSelectedIndex();
+				Transformator transformator = new Transformator();
+				detection.frame.setVisible(true);
+				path=textField.getText();
+				System.out.println(comboBox.toString());
+				String text;
+				Format=comboBox_1.getSelectedIndex();
+				detection.format=getFormat();
+				System.out.println("get ==="+getFormat());
+				System.out.println("IDL = "+indiceLangue);
+				if(indiceLangue==0)
+					 text = transformator.imageToString(path ,Format,"eng");					
+				else if(indiceLangue==1)
+					 text = transformator.imageToString(path ,Format,"fra");
+				else if(indiceLangue==2)
+					 text = transformator.imageToString(path ,Format,"DEU");
+				else if(indiceLangue==3)
+					 text = transformator.imageToString(path ,Format,"SPA");
+				else{
+					text = transformator.imageToString(path,Format,"POR");
+				}
+					
+				{
+					JTextArea textpane= new JTextArea();
+					textpane.setEditable(false);
+					textpane.setText(text);
+					JScrollPane jsp = new JScrollPane(textpane);
+					jsp.setBounds(176, 16, 493, 361);
+					detection.frame.add(jsp);
+					detection.frame.repaint();
+					detection.frame.revalidate();
+				}
 		}
-			
-
 	}
 }
 	 public void initialize() {
@@ -131,34 +166,54 @@ public class FristGuI {
 		JButton btnLoad = new JButton("Load");
 		MouseAct mouseact = new MouseAct();
 		btnLoad.addMouseListener(mouseact);
-		btnLoad.setBounds(285, 453, 121, 50);
+		btnLoad.setBounds(401, 493, 144, 50);
 		frame.getContentPane().add(btnLoad);
 
 		textField = new JTextField();
-		textField.setBounds(33, 449, 240, 50);
+		textField.setBounds(146, 492, 240, 50);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		panel = new JPanel();
 		panel.setBackground(new Color(255, 255, 255));
-		panel.setForeground(new Color(240, 248, 255));
-		panel.setBounds(36, 6, 423, 426);
+		panel.setBounds(146, 29, 543, 384);
 
 		frame.getContentPane().add(panel);
 
-		JButton button = new JButton("Detect");
+	    button = new JButton("Detect");
 		button.addMouseListener(mouseact);
+		button.setEnabled(false);
 		JSeparator jSeparator1 = new JSeparator();
 		frame.getContentPane().add(jSeparator1);
 		jSeparator1.setBounds(269, 212, 2, 201);
 		jSeparator1.setOrientation(SwingConstants.VERTICAL);
-		button.setBounds(586, 458, 202, 41);
+		button.setBounds(557, 493, 132, 50);
 		frame.getContentPane().add(button);
 		
-				 textPane = new JTextPane();
-				 jsp = new JScrollPane(textPane);
-				 jsp.setBounds(484, 6, 325, 426);	 
-				 frame.getContentPane().add(jsp);
-				 
+		JLabel lblNewLabel = new JLabel("Langues :");
+		lblNewLabel.setBounds(76, 422, 63, 33);
+		frame.getContentPane().add(lblNewLabel);
+		{
+		comboBox.addItem("English");
+		comboBox.addItem("French");
+		comboBox.addItem("German");
+		comboBox.addItem("Spanich");
+		comboBox.addItem("Portuguese");
+		comboBox.setBounds(146, 426, 541, 27);
+		frame.getContentPane().add(comboBox);				
+		}		
+		
+		
+		comboBox_1.addItem("Format txt");
+		comboBox_1.addItem("Format word");
+		comboBox_1.addItem("Format PDF");
+		comboBox_1.setBounds(146, 463, 543, 27);
+		frame.getContentPane().add(comboBox_1);
+		
+		JLabel label_1 = new JLabel("Format :");
+		
+		label_1.setBounds(76, 459, 63, 33);
+		frame.getContentPane().add(label_1);
+		
 	}
    
 	public static void main(String[] args) {
